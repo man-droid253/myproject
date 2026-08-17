@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{% block title %}Mason's Flask App{% endblock %}</title>
+  </head>
+  <body class="{%block body_class%}{%endblock%}">
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/projects">Projects</a></li>
+      </ul>
+    </nav>
+
+    <main>
+ {% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <p class="flash-message {{ category }}">{{ message }}</p>
+  {% endfor %}
+{% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2026 My Portfolio Website</p>
+    </footer>
+  </body>
+</html>
