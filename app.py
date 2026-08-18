@@ -38,7 +38,7 @@ def add_project():
         project_name = request.form.get('project-add')
         project_description = request.form.get('project-description')
         project_category = request.form.get('project-category')
-        flash(f'Project "{project_name}" added successfully!', 'success')  
+        flash(f'Project "{project_name}" added to "{project_category}" successfully!', 'success')  
         
         if project_name and project_description:
             conn = sqlite3.connect('projects.db')
@@ -57,9 +57,9 @@ def delete_project(project_id):
     c.execute("DELETE FROM projects WHERE id = ?", (project_id,))
     conn.commit()
     conn.close()
-    flash(f'Project with ID {project_id} deleted successfully!', 'success')  
-    
-    return redirect('/projects')  
+    flash(f'Project with ID {project_id} deleted successfully!', 'success')
+
+    return redirect('/projects')
 
 @app.route('/edit_project/<int:project_id>', methods=['GET', 'POST'])
 def edit_project(project_id):
