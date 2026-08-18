@@ -26,5 +26,13 @@
     <footer>
         <p>&copy; 2026 My Portfolio Website</p>
     </footer>
+    <script>
+      window.setTimeout(() => {
+        document.querySelectorAll('.flash-message').forEach((message) => {
+          message.classList.add('is-hidden');
+          window.setTimeout(() => message.remove(), 300);
+        });
+      }, 2000);
+    </script>
   </body>
 </html>

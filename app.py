@@ -3,7 +3,7 @@ import sqlite3
     
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'your_secret_key_here'  # Replace with a secure secret key
+app.config['SECRET_KEY'] = 'banana'  # Replace with a secure secret key
 
 conn = sqlite3.connect('projects.db')
 c = conn.cursor()
