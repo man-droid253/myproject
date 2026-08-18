@@ -10,7 +10,8 @@ c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS projects
              (id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT NOT NULL,
-              description TEXT NOT NULL)''')
+              description TEXT NOT NULL,
+              category TEXT NOT NULL DEFAULT 'Learning')''')
 conn.commit()
 conn.close()
 
@@ -36,13 +37,14 @@ def add_project():
     if request.method == 'POST':
         project_name = request.form.get('project-add')
         project_description = request.form.get('project-description')
+        project_category = request.form.get('project-category')
         flash(f'Project "{project_name}" added successfully!', 'success')  
         
         if project_name and project_description:
             conn = sqlite3.connect('projects.db')
             c = conn.cursor()
-            c.execute("INSERT INTO projects (name, description) VALUES (?, ?)",
-                      (project_name, project_description))
+            c.execute("INSERT INTO projects (name, description, category) VALUES (?, ?, ?)",
+                      (project_name, project_description, project_category))
             conn.commit()
             conn.close()
     
@@ -67,11 +69,12 @@ def edit_project(project_id):
     if request.method == 'POST':
         project_name = request.form.get('project-add')
         project_description = request.form.get('project-description')
+        project_category = request.form.get('project-category')
         flash(f'Project "{project_name}" updated successfully!', 'success')
         if project_name and project_description:
             c.execute(
-                "UPDATE projects SET name = ?, description = ? WHERE id = ?",
-                (project_name, project_description, project_id)
+                "UPDATE projects SET name = ?, description = ?, category = ? WHERE id = ?",
+                (project_name, project_description, project_category, project_id)
             )
             conn.commit()
 
