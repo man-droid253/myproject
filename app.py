@@ -1,6 +1,8 @@
 import os
 import sqlite3
 from datetime import datetime
+import re
+from markupsafe import Markup
 
 from flask import Flask, flash, redirect, render_template, request
 
@@ -30,6 +32,17 @@ def init_db():
             )
             '''
         )
+
+def highlight(text, query):
+    if not text or not query:
+        return Markup.escape(text or '')
+    try:
+        pattern = re.compile(re.escape(query), re.IGNORECASE)
+        # Replace matches with <mark>...</mark>
+        highlighted = pattern.sub(lambda m: '<mark>{}</mark>'.format(Markup.escape(m.group(0))), text)
+        return Markup(highlighted)
+    except Exception:
+        return Markup.escape(text)
 
 
 def reset_db():
@@ -75,15 +88,36 @@ def about():
 
 @app.route('/projects')
 def projects():
+    q = (request.args.get('q') or '').strip()
+    params = []
+    where = ''
+    if q:
+        like = f"%{q}%"
+        where = "WHERE lower(name) LIKE ? OR lower(description) LIKE ? OR lower(category) LIKE ? OR lower(status) LIKE ?"
+        params = [like.lower(), like.lower(), like.lower(), like.lower()]
+
+    sql = f"SELECT * FROM projects {where} ORDER BY timestamp DESC"
     with get_db_connection() as conn:
-        rows = conn.execute("SELECT * FROM projects ORDER BY timestamp DESC").fetchall()
+        rows = conn.execute(sql, params).fetchall()
+
     projects_list = []
     for r in rows:
         d = dict(r)
         d['formatted_ts'] = format_timestamp(d.get('timestamp'))
+        # prepare highlighted versions for server-side search results
+        if q:
+            d['highlighted_name'] = highlight(d.get('name', ''), q)
+            d['highlighted_description'] = highlight(d.get('description', ''), q)
+            d['highlighted_category'] = highlight(d.get('category', ''), q)
+            d['highlighted_status'] = highlight(d.get('status', ''), q)
+        else:
+            d['highlighted_name'] = Markup.escape(d.get('name', ''))
+            d['highlighted_description'] = Markup.escape(d.get('description', ''))
+            d['highlighted_category'] = Markup.escape(d.get('category', ''))
+            d['highlighted_status'] = Markup.escape(d.get('status', ''))
         projects_list.append(d)
 
-    return render_template('projects.html', projects_list=projects_list)
+    return render_template('projects.html', projects_list=projects_list, q=q)
 
 
 @app.route('/reset_db', methods=['POST'])

@@ -9,8 +9,9 @@
   
   
   <div class="search-container" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
-    <input type="text" id="search-input" placeholder="Search projects by name, category or status..." class="form-control">
-    <button id="search-button" class="button" type="button">Search</button>
+    <input type="text" id="search-input" name="q" value="{{ q }}" placeholder="Search projects by name, category or status..." class="form-control">
+    <button id="search-button" class="button" type="button">Search (server)</button>
+    <button id="search-clear" class="button" type="button" style="background:#e5e7eb;color:#111;border-color:#cbd5e1;">Clear</button>
   </div>
  
    <form method="post" action="/add_project">
@@ -57,10 +58,10 @@
    
     {% for project in projects_list %}
       <div class="project-card">
-        <h3 class="project-title">{{ project['name'] }}</h3>
-        <p class="project-description">{{ project['description'] }}</p>
-        <p><small>Category: <span class="project-category">{{ project['category'] }}</span></small></p>
-        <p><small>Status: <span class="status-badge status-{{ project['status']|replace(' ', '-')|lower }} status">{{ project['status'] }}</span></small></p>
+        <h3 class="project-title">{{ project.get('highlighted_name')|safe if project.get('highlighted_name') else project['name'] }}</h3>
+        <p class="project-description">{{ project.get('highlighted_description')|safe if project.get('highlighted_description') else project['description'] }}</p>
+        <p><small>Category: <span class="project-category">{{ project.get('highlighted_category')|safe if project.get('highlighted_category') else project['category'] }}</span></small></p>
+        <p><small>Status: <span class="status-badge status-{{ project['status']|replace(' ', '-')|lower }} status">{{ project.get('highlighted_status')|safe if project.get('highlighted_status') else project['status'] }}</span></small></p>
         <p><small>Added on: {{ project['formatted_ts'] }}</small></p>
 
         <a class="edit-button" href="{{ url_for('edit_project', project_id=project['id']) }}">Edit project</a>
