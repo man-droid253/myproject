@@ -10,6 +10,32 @@
   --danger-dark: #b91c1c;
   --box-shadow: 0 4px 12px rgba(40, 28, 110, 0.796);
 }
+.search-container {
+  margin-bottom: 20px;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#search-bar {
+  width: 100%;
+  padding: 10px 14px;
+  font-size:1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-sizing: border-box;
+  box-shadow: var(--box-shadow);
+}
+
+#search-bar:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.is-hidden{
+  display: none !important;
+}
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -143,8 +169,7 @@ nav a:hover {
 }
 
 .flash-message.is-hidden {
-  opacity: 0;
-  transform: translateY(-8px);
+  display: none;
 }
 
 .edit-button {
