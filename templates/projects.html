@@ -57,7 +57,7 @@
         <h3>{{ project['name'] }}</h3>
         <p>{{ project['description'] }}</p>
         <p><small>Category: {{ project['category'] }}</small></p>
-        <p><small>Status: {{ project['status'] }}</small></p>
+        <p><small>Status: <span class="status-badge status-{{ project['status']|replace(' ', '-')|lower }}">{{ project['status'] }}</span></small></p>
         <p><small>Added on: {{ project['formatted_ts'] }}</small></p>
 
         <a class="edit-button" href="{{ url_for('edit_project', project_id=project['id']) }}">Edit project</a>

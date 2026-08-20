@@ -5,9 +5,10 @@
   --primary-dark: #3730a3;
   --text: #1e293b;
   --muted-text: #475569;
-  --border: #c7d2fe;
+  --border: #09238b;
   --danger: #dc2626;
   --danger-dark: #b91c1c;
+  --box-shadow: 0 4px 12px rgba(40, 28, 110, 0.796);
 }
 
 body {
@@ -93,13 +94,13 @@ nav a:hover {
   background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(30, 41, 59, 0.12);
+  box-shadow: 0 4px 12px rgba(22, 16, 134, 0.862);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .project-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 18px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 8px 18px rgba(44, 18, 128, 0.818);
 }
 
 .project-card h3 {
@@ -174,3 +175,17 @@ nav a:hover {
   color: #166534;
   border-color: #86efac;
 }
+
+/* Status badges for project cards */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: white;
+}
+.status-not-started { background-color: #6b7280; } /* gray */
+.status-in-progress { background-color: #f59e0b; } /* amber */
+.status-completed { background-color: #10b981; } /* green */
+.status-unknown { background-color: #334155; } /* fallback */
