@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+projects.db
+Flask_app_backup_*/
+page.html
