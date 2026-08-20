@@ -15,6 +15,11 @@
     <label for="project-add">Project name:</label>
     <input type="text" id="project-add" name="project-add" placeholder="John Snow" required>
     <label for="project-category">Category:</label>
+    <select id="status" name="status">
+      <option value="not started">Not Started</option>
+      <option value="in progress">In Progress</option>
+      <option value="completed">Completed</option>
+    </select>
     <select id="project-category" name="project-category">
       <option value="Web">Web</option>
       <option value="Python">Python</option>
@@ -49,12 +54,15 @@
    
     {% for project in projects_list %}
       <div class="project-card">
-        <h3>{{ project[1] }}</h3>
-        <p>{{ project[2] }}</p>
+        <h3>{{ project['name'] }}</h3>
+        <p>{{ project['description'] }}</p>
+        <p><small>Category: {{ project['category'] }}</small></p>
+        <p><small>Status: {{ project['status'] }}</small></p>
+        <p><small>Added on: {{ project['formatted_ts'] }}</small></p>
 
-        <a class="edit-button" href="{{ url_for('edit_project', project_id=project[0]) }}">Edit project</a>
+        <a class="edit-button" href="{{ url_for('edit_project', project_id=project['id']) }}">Edit project</a>
 
-        <form method="post" action="{{ url_for('delete_project', project_id=project[0]) }}">
+        <form method="post" action="{{ url_for('delete_project', project_id=project['id']) }}">
         <button type="submit" class="delete-button">Delete project</button>
         </form>
 
