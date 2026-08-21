@@ -113,12 +113,23 @@ def about():
 @app.route('/projects')
 def projects():
     q = (request.args.get('q') or '').strip()
+    status_filter = (request.args.get('status') or '').strip()
+
     params = []
-    where = ''
+    where_clauses = []
+
     if q:
         like = f"%{q}%"
-        where = "WHERE lower(name) LIKE ? OR lower(description) LIKE ? OR lower(category) LIKE ? OR lower(status) LIKE ?"
-        params = [like.lower(), like.lower(), like.lower(), like.lower()]
+        where_clauses.append("(lower(name) LIKE ? OR lower(description) LIKE ? OR lower(category) LIKE ? OR lower(status) LIKE ?)")
+        params.extend([like.lower(), like.lower(), like.lower(), like.lower()])
+
+    if status_filter and status_filter.lower() not in ('all', ''):
+        where_clauses.append("lower(status) = ?")
+        params.append(status_filter.lower())
+
+    where = ''
+    if where_clauses:
+        where = 'WHERE ' + ' AND '.join(where_clauses)
 
     sql = f"SELECT * FROM projects {where} ORDER BY timestamp DESC"
     with get_db_connection() as conn:
@@ -141,7 +152,7 @@ def projects():
             d['highlighted_status'] = Markup.escape(d.get('status', ''))
         projects_list.append(d)
 
-    return render_template('projects.html', projects_list=projects_list, q=q)
+    return render_template('projects.html', projects_list=projects_list, q=q, status_filter=status_filter)
 
 
 @app.route('/reset_db', methods=['POST'])

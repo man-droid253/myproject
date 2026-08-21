@@ -8,8 +8,16 @@
 {% block content %}
   
   
-  <div class="search-container" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
-    <input type="text" id="search-input" name="q" value="{{ q }}" placeholder="Search projects by name, category or status..." class="form-control">
+  <div class="search-container" style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <input type="text" id="search-input" name="q" value="{{ q }}" placeholder="Search projects by name, category or status..." class="form-control" style="flex:1;min-width:200px;">
+
+    <select id="filter-status" name="status" style="padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);">
+      <option value="">All statuses</option>
+      <option value="not started" {% if status_filter == 'not started' %}selected{% endif %}>Not Started</option>
+      <option value="in progress" {% if status_filter == 'in progress' %}selected{% endif %}>In Progress</option>
+      <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+    </select>
+
     <button id="search-button" class="button" type="button">Search (server)</button>
     <button id="search-clear" class="button" type="button" style="background:#e5e7eb;color:#111;border-color:#cbd5e1;">Clear</button>
   </div>
