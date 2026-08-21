@@ -7,4 +7,35 @@
 {% block content %}
   <h1>Welcome!</h1>
   <p>This is the home page.</p>
+
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <h4>Total Projects</h4>
+      <p class="stat-value">{{ total_projects }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Planned</h4>
+      <p class="stat-value">{{ planned_projects }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>In Progress</h4>
+      <p class="stat-value">{{ in_progress_projects }}</p>
+    </div>
+    <div class="stat-card">
+      <h4>Completed</h4>
+      <p class="stat-value">{{ completed_projects }}</p>
+    </div>
+  </div>
+
+  <div class="recent-projects">
+    <h3>Recent Projects</h3>
+
+    <ul>
+      {% for project in recent_projects %}
+        <li><strong>{{ project['name'] }}</strong> - {{ project['description'] }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
 {% endblock %}
+  

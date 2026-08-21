@@ -77,8 +77,32 @@ def format_timestamp(ts_str):
 
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def dashboard():
+    # Use the shared DB helper and consistent status values
+    with get_db_connection() as conn:
+        total_projects = conn.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
+        planned_projects = conn.execute("SELECT COUNT(*) FROM projects WHERE status = 'not started'").fetchone()[0]
+        in_progress_projects = conn.execute("SELECT COUNT(*) FROM projects WHERE status = 'in progress'").fetchone()[0]
+        completed_projects = conn.execute("SELECT COUNT(*) FROM projects WHERE status = 'completed'").fetchone()[0]
+
+        rows = conn.execute(
+            "SELECT id, name, description, category, status, timestamp FROM projects ORDER BY timestamp DESC LIMIT 5"
+        ).fetchall()
+
+    recent_projects = []
+    for r in rows:
+        d = dict(r)
+        d['formatted_ts'] = format_timestamp(d.get('timestamp'))
+        recent_projects.append(d)
+
+    return render_template(
+        'index.html',
+        total_projects=total_projects,
+        planned_projects=planned_projects,
+        in_progress_projects=in_progress_projects,
+        completed_projects=completed_projects,
+        recent_projects=recent_projects,
+    )
 
 
 @app.route('/about')
