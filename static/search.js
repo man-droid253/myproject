@@ -26,6 +26,7 @@ function highlightElement(el, query) {
 function searchProjects() {
   const raw = (document.getElementById('search-input').value || '').trim();
   const searchQuery = raw.toLowerCase();
+  const selectedStatus = (document.getElementById('filter-status')?.value || '').toLowerCase();
   const cards = document.querySelectorAll('.project-card');
 
   cards.forEach(card => {
@@ -37,7 +38,9 @@ function searchProjects() {
     const status = statusEl ? (statusEl.dataset.original || statusEl.textContent).toLowerCase() : '';
     const category = categoryEl ? (categoryEl.dataset.original || categoryEl.textContent).toLowerCase() : '';
 
-    const matched = !searchQuery || title.includes(searchQuery) || status.includes(searchQuery) || category.includes(searchQuery);
+    const matchesSearch = !searchQuery || title.includes(searchQuery) || status.includes(searchQuery) || category.includes(searchQuery);
+    const matchesStatus = !selectedStatus || status === selectedStatus;
+    const matched = matchesSearch && matchesStatus;
 
     if (matched) {
       card.classList.remove('is-hidden');

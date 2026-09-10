@@ -32,6 +32,13 @@
         <option value="in progress" {% if project['status'] == 'in progress' %}selected{% endif %}>In Progress</option>
         <option value="completed" {% if project['status'] == 'completed' %}selected{% endif %}>Completed</option>
       </select>
+
+      <label for="project-category">Category:</label>
+      <select id="project-category" name="project-category">
+        <option value="Web" {% if project['category'] == 'Web' %}selected{% endif %}>Web</option>
+        <option value="Python" {% if project['category'] == 'Python' %}selected{% endif %}>Python</option>
+        <option value="Learning" {% if project['category'] == 'Learning' %}selected{% endif %}>Learning</option>
+      </select>
     </div>
 
     <p><small>Added on: {{ project['formatted_ts'] }}</small></p>

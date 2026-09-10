@@ -33,6 +33,17 @@ def init_db():
             '''
         )
 
+        # CREATE TABLE does not update an older database, so add columns
+        # individually when someone opens a project made before these fields.
+        columns = {row['name'] for row in conn.execute('PRAGMA table_info(projects)')}
+        if 'category' not in columns:
+            conn.execute("ALTER TABLE projects ADD COLUMN category TEXT NOT NULL DEFAULT 'Learning'")
+        if 'status' not in columns:
+            conn.execute("ALTER TABLE projects ADD COLUMN status TEXT NOT NULL DEFAULT 'not started'")
+        if 'timestamp' not in columns:
+            conn.execute("ALTER TABLE projects ADD COLUMN timestamp DATETIME")
+            conn.execute("UPDATE projects SET timestamp = CURRENT_TIMESTAMP WHERE timestamp IS NULL")
+
 def highlight(text, query):
     if not text or not query:
         return Markup.escape(text or '')
@@ -175,7 +186,7 @@ def add_project():
 
     with get_db_connection() as conn:
         conn.execute(
-            "INSERT INTO projects (name, description, category, status) VALUES (?, ?, ?, ?)",
+            "INSERT INTO projects (name, description, category, status, timestamp) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)",
             (project_name, project_description, project_category, project_status),
         )
 
