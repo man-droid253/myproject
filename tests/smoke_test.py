@@ -74,8 +74,9 @@ def main():
     code, html = get_projects()
     assert code == 200
     assert TEST_NAME in html, 'Project name not in /projects output'
-    expected_status = f'Status: {status}'
-    assert expected_status in html, f"Expected status text '{expected_status}' not found in /projects output"
+    assert 'Status:' in html, "Expected 'Status:' label not found in /projects output"
+    expected_status = f'>{status}<'
+    assert expected_status in html, f"Expected status value '{status}' not found in /projects output"
     assert 'Added on:' in html, "Expected 'Added on:' not found in /projects output"
 
     print('Smoke test passed; cleaning up...')

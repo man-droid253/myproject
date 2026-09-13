@@ -58,7 +58,8 @@ def test_smoke_end_to_end():
     code, html = get_projects()
     assert code == 200
     assert TEST_NAME in html
-    assert f'Status: {status}' in html
+    assert 'Status:' in html
+    assert f'>{status}<' in html
     assert 'Added on:' in html
 
     # Cleanup

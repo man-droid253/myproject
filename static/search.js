@@ -27,6 +27,7 @@ function searchProjects() {
   const raw = (document.getElementById('search-input').value || '').trim();
   const searchQuery = raw.toLowerCase();
   const selectedStatus = (document.getElementById('filter-status')?.value || '').toLowerCase();
+  const selectedCategory = (document.getElementById('filter-category')?.value || '').toLowerCase();
   const cards = document.querySelectorAll('.project-card');
 
   cards.forEach(card => {
@@ -40,7 +41,8 @@ function searchProjects() {
 
     const matchesSearch = !searchQuery || title.includes(searchQuery) || status.includes(searchQuery) || category.includes(searchQuery);
     const matchesStatus = !selectedStatus || status === selectedStatus;
-    const matched = matchesSearch && matchesStatus;
+    const matchesCategory = !selectedCategory || category === selectedCategory;
+    const matched = matchesSearch && matchesStatus && matchesCategory;
 
     if (matched) {
       card.classList.remove('is-hidden');
@@ -55,6 +57,21 @@ function searchProjects() {
   });
 }
 
+function getProjectsUrl() {
+  const q = encodeURIComponent((document.getElementById('search-input')?.value || '').trim());
+  const status = encodeURIComponent((document.getElementById('filter-status')?.value || '').trim());
+  const category = encodeURIComponent((document.getElementById('filter-category')?.value || '').trim());
+  const sort = encodeURIComponent((document.getElementById('sort-by')?.value || 'newest').trim());
+  const params = [];
+
+  if (q) params.push('q=' + q);
+  if (status) params.push('status=' + status);
+  if (category) params.push('category=' + category);
+  if (sort && sort !== 'newest') params.push('sort=' + sort);
+
+  return '/projects' + (params.length ? '?' + params.join('&') : '');
+}
+
 // wire up input, button, clear, and keyboard shortcuts with debounce
 const searchInput = document.getElementById('search-input');
 if (searchInput) {
@@ -67,8 +84,7 @@ if (searchInput) {
   searchInput.addEventListener('keydown', (ev) => {
     if (ev.key === 'Enter') {
       ev.preventDefault();
-      const q = encodeURIComponent(searchInput.value.trim());
-      window.location.href = '/projects' + (q ? ('?q=' + q) : '');
+      window.location.href = getProjectsUrl();
     }
 
     // keyboard shortcut: press '/' to focus (when not typing)
@@ -79,14 +95,7 @@ if (searchInput) {
 const searchButton = document.getElementById('search-button');
 if (searchButton) {
   searchButton.addEventListener('click', () => {
-    const q = encodeURIComponent((document.getElementById('search-input').value || '').trim());
-    const status = encodeURIComponent((document.getElementById('filter-status')?.value || '').trim());
-    let url = '/projects';
-    const params = [];
-    if (q) params.push('q=' + q);
-    if (status) params.push('status=' + status);
-    if (params.length) url += '?' + params.join('&');
-    window.location.href = url;
+    window.location.href = getProjectsUrl();
   });
 }
 
@@ -96,7 +105,7 @@ if (clearButton) {
     document.getElementById('search-input').value = '';
     const fs = document.getElementById('filter-status');
     if (fs) fs.value = '';
-    searchProjects();
+    window.location.href = '/projects';
   });
 }
 
@@ -105,6 +114,18 @@ if (statusSelect) {
   statusSelect.addEventListener('change', () => {
     // apply client-side filter immediately
     searchProjects();
+  });
+}
+
+const categorySelect = document.getElementById('filter-category');
+if (categorySelect) {
+  categorySelect.addEventListener('change', searchProjects);
+}
+
+const sortSelect = document.getElementById('sort-by');
+if (sortSelect) {
+  sortSelect.addEventListener('change', () => {
+    window.location.href = getProjectsUrl();
   });
 }
 

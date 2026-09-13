@@ -4,10 +4,13 @@ from datetime import datetime
 import re
 from markupsafe import Markup
 
-from flask import Flask, flash, redirect, render_template, request
+from flask import Flask, abort, flash, redirect, render_template, request
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'banana'  # Replace with a secure secret key
+app.config['ALLOW_DATABASE_RESET'] = (
+    os.environ.get('ALLOW_DATABASE_RESET') == 'true'
+)
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'projects.db')
 
@@ -16,7 +19,6 @@ def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
-
 
 def init_db():
     with get_db_connection() as conn:
@@ -125,6 +127,17 @@ def about():
 def projects():
     q = (request.args.get('q') or '').strip()
     status_filter = (request.args.get('status') or '').strip()
+    category_filter = (request.args.get('category') or '').strip()
+    sort_by = (request.args.get('sort') or 'newest').strip().lower()
+
+    sort_options = {
+        'newest': 'timestamp DESC',
+        'oldest': 'timestamp ASC',
+        'name': 'name COLLATE NOCASE ASC',
+        'status': 'status COLLATE NOCASE ASC, name COLLATE NOCASE ASC',
+    }
+    if sort_by not in sort_options:
+        sort_by = 'newest'
 
     params = []
     where_clauses = []
@@ -138,11 +151,15 @@ def projects():
         where_clauses.append("lower(status) = ?")
         params.append(status_filter.lower())
 
+    if category_filter and category_filter.lower() not in ('all', ''):
+        where_clauses.append("lower(category) = ?")
+        params.append(category_filter.lower())
+
     where = ''
     if where_clauses:
         where = 'WHERE ' + ' AND '.join(where_clauses)
 
-    sql = f"SELECT * FROM projects {where} ORDER BY timestamp DESC"
+    sql = f"SELECT * FROM projects {where} ORDER BY {sort_options[sort_by]}"
     with get_db_connection() as conn:
         rows = conn.execute(sql, params).fetchall()
 
@@ -163,11 +180,21 @@ def projects():
             d['highlighted_status'] = Markup.escape(d.get('status', ''))
         projects_list.append(d)
 
-    return render_template('projects.html', projects_list=projects_list, q=q, status_filter=status_filter)
-
+    return render_template(
+        'projects.html',
+        projects_list=projects_list,
+        q=q,
+        status_filter=status_filter,
+        category_filter=category_filter,
+        sort_by=sort_by,
+    )
 
 @app.route('/reset_db', methods=['POST'])
 def reset_db_route():
+
+    if not app.config["ALLOW_DATABASE_RESET"]:
+        abort(404)
+
     reset_db()
     flash('Database reset successfully.', 'success')
     return redirect('/projects')
