@@ -8,33 +8,7 @@
 {% block content %}
   
   
-  <div class="search-container">
-    <input type="text" id="search-input" name="q" value="{{ q }}" placeholder="Search projects by name, category or status..." class="form-control">
-
-    <select id="filter-status" name="status" class="filter-status">
-      <option value="">All statuses</option>
-      <option value="not started" {% if status_filter == 'not started' %}selected{% endif %}>Not Started</option>
-      <option value="in progress" {% if status_filter == 'in progress' %}selected{% endif %}>In Progress</option>
-      <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
-    </select>
-
-    <select id="filter-category" name="category" class="filter-category">
-      <option value="">All categories</option>
-      <option value="Web" {% if category_filter == 'Web' %}selected{% endif %}>Web</option>
-      <option value="Python" {% if category_filter == 'Python' %}selected{% endif %}>Python</option>
-      <option value="Learning" {% if category_filter == 'Learning' %}selected{% endif %}>Learning</option>
-    </select>
-
-    <select id="sort-by" name="sort" class="sort-by">
-      <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest first</option>
-      <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest first</option>
-      <option value="name" {% if sort_by == 'name' %}selected{% endif %}>Name (A–Z)</option>
-      <option value="status" {% if sort_by == 'status' %}selected{% endif %}>Status</option>
-    </select>
-
-    <button id="search-button" class="button search-btn" type="button">Search</button>
-    <button id="search-clear" class="button clear-btn" type="button">Clear</button>
-  </div>
+  {% include "items.html" %}
  
    <form method="post" action="/add_project">
    <div class="form-group">
