@@ -30,11 +30,18 @@
   <div class="recent-projects">
     <h3>Recent Projects</h3>
 
+    {% if recent_projects %}
     <ul>
       {% for project in recent_projects %}
         <li><strong>{{ project['name'] }}</strong> - {{ project['description'] }}</li>
       {% endfor %}
     </ul>
+    {% else %}
+      <div class="empty-state">
+        <p>No projects yet. Add your first project to start tracking your work.</p>
+        <a class="edit-button" href="/projects">Add a project</a>
+      </div>
+    {% endif %}
   </div>
 
 {% endblock %}

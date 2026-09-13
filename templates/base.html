@@ -9,9 +9,9 @@
   <body class="{%block body_class%}{%endblock%}">
     <nav>
       <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/projects">Projects</a></li>
+        <li><a class="{% if request.path == '/' %}active{% endif %}" href="/">Home</a></li>
+        <li><a class="{% if request.path == '/about' %}active{% endif %}" href="/about">About</a></li>
+        <li><a class="{% if request.path == '/projects' %}active{% endif %}" href="/projects">Projects</a></li>
       </ul>
     </nav>
 
